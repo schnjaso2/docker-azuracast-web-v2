@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+echo "Running AzuraCast Tests"
+
+cd /var/azuracast/www
+./vendor/bin/codecept run --no-interaction --coverage --coverage-xml --fail-fast

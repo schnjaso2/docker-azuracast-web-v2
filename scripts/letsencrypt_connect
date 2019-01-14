@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+if [ `whoami` != 'azuracast' ]; then
+    echo 'This script must be run as the "azuracast" user. Rerunning...'
+    sudo -E -u azuracast letsencrypt_connect $@
+    exit 1
+fi
+
+usage ()
+{
+    echo 'Usage: letsencrypt_connect domainname.example.com'
+    exit
+}
+
+if [ "$#" -ne 1 ]
+then
+  usage
+fi
+
+DOMAIN=$1
+SSL_DIR="/etc/letsencrypt"
+LETSENCRYPT_DIR="$SSL_DIR/live/$DOMAIN"
+shift
+
+certbot certonly --webroot -w /var/www/letsencrypt -d $DOMAIN $*
+
+if [ -d $LETSENCRYPT_DIR ]; then
+    rm $SSL_DIR/ssl.crt
+    rm $SSL_DIR/ssl.key
+
+    ln -s $LETSENCRYPT_DIR/fullchain.pem $SSL_DIR/ssl.crt
+    ln -s $LETSENCRYPT_DIR/privkey.pem $SSL_DIR/ssl.key
+
+    echo 'Reloading nginx...'
+    sudo kill -HUP `cat /var/run/nginx.pid`
+
+    echo 'Domain is ready to be served via LetsEncrypt!'
+    exit
+else
+    echo "Domain name $DOMAIN is not set up with LetsEncrypt yet. Reverting to self-signed cert..."
+
+    letsencrypt_uninstall
+    exit 1
+fi
