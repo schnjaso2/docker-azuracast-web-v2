@@ -18,14 +18,8 @@ RUN apt-get update && \
 # Create azuracast user.
 RUN adduser --home /var/azuracast --disabled-password --gecos "" azuracast \
     && usermod -aG docker_env azuracast \
-    && mkdir -p /var/azuracast/www \
-    && mkdir -p /var/azuracast/www_tmp \
-    && mkdir -p /var/azuracast/geoip \
-    && mkdir -p /var/www/letsencrypt \
-    && mkdir -p /etc/letsencrypt \
+    && mkdir -p /var/azuracast/www /var/azuracast/www_tmp /var/azuracast/geoip \
     && chown -R azuracast:azuracast /var/azuracast \
-    && chown -R azuracast:azuracast /var/www/letsencrypt \
-    && chown -R azuracast:azuracast /etc/letsencrypt \
     && chmod -R 777 /var/azuracast/www_tmp \
     && echo 'azuracast ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 
@@ -65,6 +59,10 @@ RUN add-apt-repository universe \
     && add-apt-repository ppa:certbot/certbot \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends certbot 
+
+# Set certbot permissions
+RUN mkdir -p /var/www/letsencrypt /var/lib/letsencrypt /etc/letsencrypt /var/log/letsencrypt \
+    && chown -R azuracast:azuracast /var/www/letsencrypt /var/lib/letsencrypt /etc/letsencrypt /var/log/letsencrypt
 
 # Generate the dhparam.pem file (takes a long time)
 RUN openssl dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096
