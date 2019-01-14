@@ -21,8 +21,10 @@ RUN adduser --home /var/azuracast --disabled-password --gecos "" azuracast \
     && mkdir -p /var/azuracast/www \
     && mkdir -p /var/azuracast/www_tmp \
     && mkdir -p /var/azuracast/geoip \
+    && mkdir -p /var/www/letsencrypt \
     && mkdir -p /etc/letsencrypt \
     && chown -R azuracast:azuracast /var/azuracast \
+    && chown -R azuracast:azuracast /var/www/letsencrypt \
     && chown -R azuracast:azuracast /etc/letsencrypt \
     && chmod -R 777 /var/azuracast/www_tmp \
     && echo 'azuracast ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
