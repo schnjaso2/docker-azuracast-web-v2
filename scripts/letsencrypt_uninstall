@@ -8,18 +8,18 @@ fi
 
 SSL_DIR="/etc/letsencrypt"
 
-rm $SSL_DIR/ssl.key
-rm $SSL_DIR/ssl.crt
+cd $SSL_DIR
+rm ssl.crt ssl.key
 
 openssl req -new -nodes -x509 -subj "/C=US/ST=Texas/L=Austin/O=IT/CN=localhost" \
     -days 365 -extensions v3_ca \
     -keyout $SSL_DIR/selfsigned.key \
 	-out $SSL_DIR/selfsigned.crt
 
-ln -s $SSL_DIR/selfsigned.key $SSL_DIR/ssl.key
-ln -s $SSL_DIR/selfsigned.crt $SSL_DIR/ssl.crt
+ln -s selfsigned.key ssl.key
+ln -s selfsigned.crt ssl.crt
 
-sudo kill -HUP `cat /var/run/nginx.pid`
+sudo kill -HUP `sudo cat /var/run/nginx.pid`
 
 echo "Self-signed certificate restored."
 exit

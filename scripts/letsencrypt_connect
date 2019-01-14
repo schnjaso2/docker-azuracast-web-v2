@@ -25,14 +25,14 @@ shift
 certbot certonly --webroot -w /var/www/letsencrypt -d $DOMAIN $*
 
 if [ -d $LETSENCRYPT_DIR ]; then
-    rm $SSL_DIR/ssl.crt
-    rm $SSL_DIR/ssl.key
+    cd $SSL_DIR
+    rm ssl.crt ssl.key
 
-    ln -s $LETSENCRYPT_DIR/fullchain.pem $SSL_DIR/ssl.crt
-    ln -s $LETSENCRYPT_DIR/privkey.pem $SSL_DIR/ssl.key
+    ln -s live/$DOMAIN/fullchain.pem ssl.crt
+    ln -s live/$DOMAIN/privkey.pem ssl.key
 
     echo 'Reloading nginx...'
-    sudo kill -HUP `cat /var/run/nginx.pid`
+    sudo kill -HUP `sudo cat /var/run/nginx.pid`
 
     echo 'Domain is ready to be served via LetsEncrypt!'
     exit
