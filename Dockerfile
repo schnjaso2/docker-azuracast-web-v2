@@ -13,7 +13,8 @@ RUN apt-get update && \
         ca-certificates curl wget tar software-properties-common sudo zip unzip git tzdata \
         nginx nginx-common nginx-extras \
         php7.2-fpm php7.2-cli php7.2-gd \
-        php7.2-curl php7.2-xml php7.2-zip php7.2-mysqlnd php7.2-mbstring php7.2-intl php7.2-redis
+        php7.2-curl php7.2-xml php7.2-zip php7.2-bcmath \
+        php7.2-mysqlnd php7.2-mbstring php7.2-intl php7.2-redis
 
 # Create azuracast user.
 RUN adduser --home /var/azuracast --disabled-password --gecos "" azuracast \
