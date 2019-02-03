@@ -28,8 +28,7 @@ RUN adduser --home /var/azuracast --disabled-password --gecos "" azuracast \
 RUN mkdir -p /run/php
 RUN touch /run/php/php7.2-fpm.pid
 
-COPY ./php/php.ini /etc/php/7.2/fpm/conf.d/05-azuracast.ini
-COPY ./php/php.ini /etc/php/7.2/cli/conf.d/05-azuracast.ini
+COPY ./php/php.ini.tmpl /etc/php/7.2/fpm/05-azuracast.ini.tmpl
 COPY ./php/phpfpmpool.conf /etc/php/7.2/fpm/pool.d/www.conf
 
 # Install composer
@@ -68,10 +67,12 @@ RUN mkdir -p /var/www/letsencrypt /var/lib/letsencrypt /etc/letsencrypt /var/log
 # Generate the dhparam.pem file (takes a long time)
 RUN openssl dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096
 
-# Set up runit services
+# Set up first-run scripts and runit services
+COPY ./startup_scripts/ /etc/my_init.d/
 COPY ./runit/ /etc/service/
 
-RUN chmod +x /etc/service/*/run
+RUN chmod +x /etc/service/*/run \
+    && chmod +x /etc/my_init.d/*
 
 # Copy crontab
 COPY ./cron/ /etc/cron.d/
@@ -117,5 +118,8 @@ ENV APPLICATION_ENV="production" \
     MYSQL_DATABASE="azuracast"
 
 # Entrypoint and default command
-ENTRYPOINT ["dockerize","-wait","tcp://mariadb:3306","-wait","tcp://influxdb:8086","-timeout","20s"]
+ENTRYPOINT ["dockerize",\
+    "-wait","tcp://mariadb:3306",\
+    "-wait","tcp://influxdb:8086",\
+    "-timeout","20s"]
 CMD ["/sbin/my_init"]

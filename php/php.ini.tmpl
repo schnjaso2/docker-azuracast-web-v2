@@ -1,0 +1,6 @@
+# AzuraCast custom PHP specifications
+
+[php]
+post_max_size={{ default .Env.PHP_MAX_FILE_SIZE "25M" }}
+upload_max_filesize={{ default .Env.PHP_MAX_FILE_SIZE "25M" }}
+memory_limit={{ default .Env.PHP_MEMORY_LIMIT "128M" }}
