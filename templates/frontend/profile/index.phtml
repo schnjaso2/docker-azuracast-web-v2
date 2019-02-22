@@ -1,0 +1,49 @@
+<?php $this->layout('main', ['title' => __('My Account'), 'manual' => true]); ?>
+
+<div class="row">
+    <div class="col-4">
+        <div class="card mb-4">
+            <a href="http://www.gravatar.com/" target="_blank">
+                <img class="card-img-top" src="<?=$user->getAvatar(500) ?>" width="100%" alt="">
+            </a>
+            <div class="card-actions">
+                <a class="btn btn-outline-primary" href="http://www.gravatar.com/" target="_blank">
+                    <i class="material-icons" aria-hidden="true">image</i>
+                    <?=__('Update Profile Picture') ?>
+                </a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title"><?=__('Roles') ?></h2>
+            </div>
+            <ul class="list-group list-group-flush">
+                <?php foreach($user->getRoles() as $role): ?>
+                    <li class="list-group-item"><?=$this->e($role->getName()) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+    <div class="col-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title"><?=__('My Account') ?></h2>
+            </div>
+            <div class="card-actions">
+                <a class="btn btn-outline-primary" href="<?=$router->named('profile:edit') ?>">
+                    <i class="material-icons" aria-hidden="true">edit</i>
+                    <?=__('Edit Profile') ?>
+                </a>
+            </div>
+            <div class="card-body">
+                <h3 class="card-subtitle"><?=__('Account Information') ?></h3>
+
+                <?=$account_info_form->renderView() ?>
+
+                <h3 class="card-subtitle mt-4"><?=__('Customization') ?></h3>
+
+                <?=$customization_form->renderView() ?>
+            </div>
+        </div>
+    </div>
+</div>

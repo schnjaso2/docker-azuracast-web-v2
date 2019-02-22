@@ -1,0 +1,11 @@
+<?php
+/** @var \Azura\Assets $assets */
+$assets
+    ->load('codemirror_css')
+    ->addInlineJs($this->fetch('admin/branding/index.js'), 99);
+
+echo $this->fetch('system/form_page', [
+    'title' => __('Custom Branding'),
+    'form' => $form,
+    'render_mode' => 'edit'
+]);

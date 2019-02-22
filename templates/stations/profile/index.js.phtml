@@ -1,0 +1,113 @@
+var nowPlaying;
+
+function iterateTimer() {
+    var np_elapsed = nowPlaying.np.now_playing.elapsed;
+    var np_total = nowPlaying.np.now_playing.duration;
+
+    if (np_elapsed < np_total) {
+        nowPlaying.np.now_playing.elapsed = np_elapsed + 1;
+    }
+}
+
+function formatTime(time) {
+    var sec_num = parseInt(time, 10);
+
+    var hours = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours < 10) {
+        hours = "0" + hours;
+    }
+    if (minutes < 10) {
+        minutes = "0" + minutes;
+    }
+    if (seconds < 10) {
+        seconds = "0" + seconds;
+    }
+    return (hours !== "00" ? hours + ':' : "") + minutes + ':' + seconds;
+}
+
+$(function() {
+    nowPlaying = new Vue({
+        el: '#profile-nowplaying',
+        data: <?=json_encode(['np' => $nowplaying]) ?>,
+        computed: {
+            "time_display": function() {
+                var time_played = this.np.now_playing.elapsed;
+                var time_total = this.np.now_playing.duration;
+
+                if (!time_total) {
+                    return null;
+                }
+
+                if (time_played > time_total) {
+                    time_played = time_total;
+                }
+
+                return formatTime(time_played) + ' / ' + formatTime(time_total);
+            }
+        }
+    });
+
+    setInterval(iterateTimer, 1000);
+
+    function loadNowPlaying() {
+        $.getJSON('<?=$router->fromHere('api:nowplaying:index') ?>', function(row) {
+            nowPlaying.np = row;
+
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: row.now_playing.song.title,
+                    artist: row.now_playing.song.artist
+                });
+            }
+
+            setTimeout(loadNowPlaying, 15000);
+        }).fail(function() {
+            setTimeout(loadNowPlaying, 30000);
+        });
+    }
+
+    setTimeout(loadNowPlaying, 15000);
+
+    var service_status_lang = {
+        "running": <?=$this->escapeJs(__('Running')) ?>,
+        "not_running": <?=$this->escapeJs(__('Not Running')) ?>
+    };
+
+    var is_first_load = true;
+
+    function checkServiceStatus() {
+        $.getJSON('<?=$router->fromHere('api:stations:status') ?>', function(data) {
+            var backend_status = $('#backend_status');
+            backend_status.removeClass('text-success text-danger');
+
+            if (data.backend_running) {
+                backend_status.addClass('text-success').text(service_status_lang.running);
+            } else {
+                backend_status.addClass('text-danger').text(service_status_lang.not_running);
+            }
+
+            var frontend_status = $('#frontend_status');
+            frontend_status.removeClass('text-success text-danger');
+
+            if (data.frontend_running) {
+                frontend_status.addClass('text-success').text(service_status_lang.running);
+            } else {
+                frontend_status.addClass('text-danger').text(service_status_lang.not_running);
+            }
+
+            if (is_first_load) {
+                setTimeout(checkServiceStatus, 5000);
+                is_first_load = false;
+            } else {
+                setTimeout(checkServiceStatus, 15000);
+            }
+        }).fail(function() {
+            setTimeout(checkServiceStatus, 30000);
+        });
+    }
+
+    checkServiceStatus();
+});

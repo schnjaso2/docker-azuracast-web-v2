@@ -1,0 +1,121 @@
+version: '2.2'
+
+services:
+  web:
+    image: azuracast/azuracast_web_v2:latest
+    build:
+      context: ../docker-azuracast-web-v2
+    # Want to customize the HTTP/S ports? Follow the instructions here:
+    # https://github.com/AzuraCast/AzuraCast/blob/master/SUPPORT.md#use-non-standard-ports
+    ports:
+      - '${AZURACAST_HTTP_PORT:-80}:80'
+      - '${AZURACAST_HTTPS_PORT:-443}:443'
+    depends_on:
+      - mariadb
+      - influxdb
+      - stations
+      - redis
+    env_file: azuracast.env
+    environment: &default-environment
+      AZURACAST_DC_REVISION: 5
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - .:/var/azuracast/www
+      - tmp_data:/var/azuracast/www_tmp
+      - station_data:/var/azuracast/stations
+      - shoutcast2_install:/var/azuracast/servers/shoutcast2
+    restart: always
+    logging: &default-logging
+      options:
+        max-size: "1m"
+        max-file: "5"
+
+  mariadb:
+    image: azuracast/azuracast_db:latest
+    build:
+      context: ../docker-azuracast-db
+    ports:
+     - "127.0.0.1:3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    env_file: azuracast.env
+    environment:
+      << : *default-environment
+    restart: always
+    logging: *default-logging
+
+  influxdb:
+    image: azuracast/azuracast_influxdb:latest
+    build:
+      context: ../docker-azuracast-influxdb
+    volumes:
+      - influx_data:/var/lib/influxdb
+    restart: always
+    logging: *default-logging
+
+  redis:
+    image: azuracast/azuracast_redis:latest
+    build:
+      context: ../docker-azuracast-redis
+    ports:
+     - "127.0.0.1:6379:6379"
+    restart: always
+    logging: *default-logging
+
+  stations:
+    container_name: azuracast_stations
+    image: azuracast/azuracast_radio:latest
+    build:
+      context: ../docker-azuracast-radio
+    ports:
+     - '8000:8000'
+     - '8005:8005'
+     - '8006:8006'
+     - '8010:8010'
+     - '8015:8015'
+     - '8016:8016'
+     - '8020:8020'
+     - '8025:8025'
+     - '8026:8026'
+     - '8030:8030'
+     - '8035:8035'
+     - '8036:8036'
+     - '8040:8040'
+     - '8045:8045'
+     - '8046:8046'
+    volumes:
+     - station_data:/var/azuracast/stations
+     - letsencrypt:/etc/nginx/ssl:ro
+     - shoutcast2_install:/var/azuracast/servers/shoutcast2
+    init: true
+    restart: always
+    logging: *default-logging
+
+#  chronograf:
+#    image: chronograf:alpine
+#    ports:
+#     - "8888:8888"
+#    command: "chronograf --influxdb-url=http://influxdb:8086"
+
+#  redis-commander:
+#    image: rediscommander/redis-commander:latest
+#    depends_on:
+#    - redis
+#    environment:
+#      REDIS_HOSTS: "local-app:redis:6379:0,local-sessions:redis:6379:1,local-doctrine:redis:6379:2"
+#    ports:
+#    - "127.0.0.1:8081:8081"
+
+#  blackfire:
+#    image: blackfire/blackfire
+#    environment:
+#      BLACKFIRE_SERVER_ID: ""
+#      BLACKFIRE_SERVER_TOKEN: ""
+
+volumes:
+  letsencrypt: {}
+  db_data: {}
+  influx_data: {}
+  station_data: {}
+  shoutcast2_install: {}
+  tmp_data: {}

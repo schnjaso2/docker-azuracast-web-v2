@@ -1,0 +1,69 @@
+#radio-player-controls {
+  display: none;
+
+  // Player controls in the embedded pages.
+  &.radio-controls-embedded {
+    &.jp-state-playing {
+      display: flex;
+      padding-top: 5px;
+    }
+
+    input.jp-volume-range {
+      height: 10px;
+    }
+  }
+
+  // Player controls on the public page.
+  &.radio-controls-standalone {
+    float: right;
+
+    &.jp-state-playing {
+      display: inline-block;
+    }
+
+    a {
+      display: inline-block;
+    }
+
+    input.jp-volume-range {
+      width: 100px;
+      height: 10px;
+    }
+  }
+
+  // Player controls in the navbar in administrative pages.
+  &.dropdown {
+    &.jp-state-playing {
+      display: inline-block;
+    }
+
+    input.jp-volume-range {
+      width: 100px;
+    }
+  }
+}
+
+.btn-audio {
+  i:before {
+    font-size: 35px;
+    vertical-align: middle;
+  }
+}
+
+.nowplaying {
+  h4, h6 {
+    margin: 0;
+  }
+  h4 {
+    font-size: 14px;
+  }
+  h6 {
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+
+  .nowplaying-progress {
+    font-size: 10px;
+    color: $textfield-color-disabled;
+  }
+}

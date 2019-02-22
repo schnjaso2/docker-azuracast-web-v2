@@ -1,0 +1,143 @@
+<?php
+namespace App;
+
+use Azura\Cache;
+use Azura\Settings;
+use Symfony\Component\Process\Process;
+
+/**
+ * App Core Framework Version
+ */
+class Version
+{
+    /** @var string Version that is displayed if no Git repository information is present. */
+    public const FALLBACK_VERSION = '0.9.2';
+
+    /** @var Cache */
+    protected $cache;
+
+    /** @var string */
+    protected $repo_dir;
+
+    /** @var Settings */
+    protected $app_settings;
+
+    public function __construct(Cache $cache, Settings $app_settings)
+    {
+        $this->cache = $cache;
+        $this->app_settings = $app_settings;
+
+        $this->repo_dir = $app_settings[Settings::BASE_DIR];
+    }
+
+    /**
+     * @return string The current tagged version.
+     */
+    public function getVersion(): string
+    {
+        $details = $this->getDetails();
+        return $details['tag'] ?? self::FALLBACK_VERSION;
+    }
+
+    /**
+     * @return string A textual representation of the current installed version.
+     */
+    public function getVersionText(): string
+    {
+        $details = $this->getDetails();
+
+        return (isset($details['tag']))
+            ? 'v'.$details['tag'].', #'.$details['commit_short'].' ('.$details['commit_date'].')'
+            : 'v'.self::FALLBACK_VERSION.' Release Build';
+    }
+
+    /**
+     * @return string|null The long-form Git hash that represents the current commit of this installation.
+     */
+    public function getCommitHash(): ?string
+    {
+        $details = $this->getDetails();
+        return $details['commit'] ?? null;
+    }
+
+    /**
+     * Load cache or generate new repository details from the underlying Git repository.
+     *
+     * @return array
+     */
+    public function getDetails(): array
+    {
+        static $details;
+
+        if (!$details) {
+            $details = $this->cache->getOrSet('app_version_details', function() {
+                return $this->_getRawDetails();
+            }, $this->app_settings->isProduction() ? 86400 : 600);
+        }
+
+        return $details;
+    }
+
+    /**
+     * Generate new repository details from the underlying Git repository.
+     *
+     * @return array
+     */
+    protected function _getRawDetails(): array
+    {
+        if (!is_dir($this->repo_dir.'/.git')) {
+            return [];
+        }
+
+        $details = [];
+
+        // Get the long form of the latest commit's hash.
+        $latest_commit_hash = $this->_runProcess(['git', 'log', '--pretty=%H', '-n1', 'HEAD']);
+
+        $details['commit'] = $latest_commit_hash;
+        $details['commit_short'] = substr($latest_commit_hash, 0, 7);
+
+        // Get the last commit's timestamp.
+        $latest_commit_date = $this->_runProcess(['git', 'log', '-n1', '--pretty=%ci', 'HEAD']);
+
+        if (!empty($latest_commit_date)) {
+            $commit_date = new \DateTime($latest_commit_date);
+            $commit_date->setTimezone(new \DateTimeZone('UTC'));
+
+            $details['commit_timestamp'] = $commit_date->getTimestamp();
+            $details['commit_date'] = $commit_date->format('Y-m-d G:i');
+        } else {
+            $details['commit_timestamp'] = 0;
+            $details['commit_date'] = 'N/A';
+        }
+
+        $last_tagged_commit = $this->_runProcess(['git', 'rev-list', '--tags', '--max-count=1']);
+        if (!empty($last_tagged_commit)) {
+            $details['tag'] = $this->_runProcess(['git', 'describe', '--tags', $last_tagged_commit], 'N/A');
+        } else {
+            $details['tag'] = 'N/A';
+        }
+
+        return $details;
+    }
+
+    /**
+     * Run the specified process and return its output.
+     *
+     * @param array $proc
+     * @param string $default
+     * @return string
+     */
+    protected function _runProcess($proc, $default = ''): string
+    {
+        $process = new Process($proc);
+        $process->setWorkingDirectory($this->repo_dir);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            return $default;
+        }
+
+        return trim($process->getOutput());
+    }
+}

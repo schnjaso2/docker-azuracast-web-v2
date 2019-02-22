@@ -1,0 +1,38 @@
+<?php $this->layout('main', ['title' => $title, 'manual' => true]); ?>
+
+<?php foreach($log_records as $row): ?>
+<div class="card mb-3">
+<?php if ($row['level'] === \Monolog\Logger::DEBUG): ?>
+    <h5 class="card-header text-info">Debug</h5>
+<?php elseif ($row['level'] === \Monolog\Logger::INFO): ?>
+    <h5 class="card-header text-info">Info</h5>
+<?php elseif ($row['level'] === \Monolog\Logger::NOTICE): ?>
+    <h5 class="card-header text-info">Notice</h5>
+<?php elseif ($row['level'] === \Monolog\Logger::WARNING): ?>
+    <h5 class="card-header text-warning">Warning</h5>
+<?php elseif ($row['level'] === \Monolog\Logger::ERROR): ?>
+    <h5 class="card-header text-danger">Error</h5>
+<?php elseif ($row['level'] === \Monolog\Logger::CRITICAL): ?>
+    <h5 class="card-header text-danger">Critical</h5>
+<?php elseif ($row['level'] === \Monolog\Logger::ALERT): ?>
+    <h5 class="card-header text-danger">Alert</h5>
+<?php elseif ($row['level'] === \Monolog\Logger::EMERGENCY): ?>
+    <h5 class="card-header text-danger">Emergency</h5>
+<?php endif; ?>
+
+    <div class="card-body">
+        <h3 class="card-title"><?=$this->e($row['message']) ?></h3>
+
+    <?php if (!empty($row['context'])): ?>
+        <?php foreach($row['context'] as $context_header => $context_value): ?>
+            <h4 class="card-subtitle"><?=$context_header ?></h4>
+            <pre><?=json_encode($context_value, \JSON_PRETTY_PRINT) ?></pre>
+        <?php endforeach; ?>
+        <?php foreach($row['extra'] as $context_header => $context_value): ?>
+            <h4 class="card-subtitle"><?=$context_header ?></h4>
+            <pre><?=json_encode($context_value, \JSON_PRETTY_PRINT) ?></pre>
+        <?php endforeach; ?>
+    <?php endif; ?>
+    </div>
+</div>
+<?php endforeach; ?>

@@ -1,0 +1,1345 @@
+openapi: 3.0.0
+info:
+  title: AzuraCast
+  description: 'AzuraCast is a standalone, turnkey web radio management tool. Radio stations hosted by AzuraCast expose a public API for viewing now playing data, making requests and more.'
+  license:
+    name: 'Apache 2.0'
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+  version: 0.9.2
+servers:
+  -
+    url: 'https://demo.azuracast.com/api'
+    description: 'AzuraCast Public Demo Server'
+paths:
+  /admin/custom_fields:
+    get:
+      tags:
+        - 'Administration: Custom Fields'
+      description: 'List all current custom fields in the system.'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomField'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+    post:
+      tags:
+        - 'Administration: Custom Fields'
+      description: 'Create a new custom field.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomField'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomField'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+  '/admin/custom_field/{id}':
+    get:
+      tags:
+        - 'Administration: Custom Fields'
+      description: 'Retrieve details for a single custom field.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomField'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+    put:
+      tags:
+        - 'Administration: Custom Fields'
+      description: 'Update details of a single custom field.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomField'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api_Status'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+    delete:
+      tags:
+        - 'Administration: Custom Fields'
+      description: 'Delete a single custom field.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api_Status'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+  /admin/permissions:
+    get:
+      tags:
+        - 'Administration: Roles'
+      description: 'Return a list of all available permissions.'
+      operationId: 'App\Controller\Api\Admin\PermissionsController::__invoke'
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+  /admin/roles:
+    get:
+      tags:
+        - 'Administration: Roles'
+      description: 'List all current roles in the system.'
+      operationId: 'App\Controller\Api\Admin\RolesController::_denormalizeToRecord'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+    post:
+      tags:
+        - 'Administration: Roles'
+      description: 'Create a new role.'
+      operationId: 'App\Controller\Api\Admin\RolesController::_denormalizeToRecord'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+  '/admin/role/{id}':
+    get:
+      tags:
+        - 'Administration: Roles'
+      description: 'Retrieve details for a single current role.'
+      operationId: 'App\Controller\Api\Admin\RolesController::_denormalizeToRecord'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Role ID'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+    put:
+      tags:
+        - 'Administration: Roles'
+      description: 'Update details of a single role.'
+      operationId: 'App\Controller\Api\Admin\RolesController::_denormalizeToRecord'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Role ID'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api_Status'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+    delete:
+      tags:
+        - 'Administration: Roles'
+      description: 'Delete a single role.'
+      operationId: 'App\Controller\Api\Admin\RolesController::_denormalizeToRecord'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Role ID'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api_Status'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+  /admin/settings:
+    get:
+      tags:
+        - 'Administration: Settings'
+      description: 'List the current values of all editable system settings.'
+      operationId: 'App\Controller\Api\Admin\SettingsController::listAction'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api_Admin_Settings'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+    put:
+      tags:
+        - 'Administration: Settings'
+      description: 'Update settings to modify any settings provided.'
+      operationId: 'App\Controller\Api\Admin\SettingsController::updateAction'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api_Admin_Settings'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api_Status'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+  /admin/users:
+    get:
+      tags:
+        - 'Administration: Users'
+      description: 'List all current users in the system.'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+    post:
+      tags:
+        - 'Administration: Users'
+      description: 'Create a new user.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+  '/admin/user/{id}':
+    get:
+      tags:
+        - 'Administration: Users'
+      description: 'Retrieve details for a single current user.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User ID'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+    put:
+      tags:
+        - 'Administration: Users'
+      description: 'Update details of a single user.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User ID'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api_Status'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+    delete:
+      tags:
+        - 'Administration: Users'
+      description: 'Delete a single user.'
+      operationId: 'App\Controller\Api\Admin\UsersController::deleteAction'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User ID'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api_Status'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+  /status:
+    get:
+      tags:
+        - Miscellaneous
+      description: 'Returns an affirmative response if the API is active.'
+      operationId: 'App\Controller\Api\IndexController::statusAction'
+      parameters: []
+      responses:
+        '200':
+          description: Success
+  /time:
+    get:
+      tags:
+        - Miscellaneous
+      description: 'Returns the time (with formatting) in GMT and the user''s local time zone, if logged in.'
+      operationId: 'App\Controller\Api\IndexController::timeAction'
+      parameters: []
+      responses:
+        '200':
+          description: Success
+  /nowplaying:
+    get:
+      tags:
+        - 'Now Playing'
+      description: 'Returns a full summary of all stations'' current state.'
+      operationId: 'App\Controller\Api\NowplayingController::__invoke'
+      parameters: []
+      responses:
+        '200':
+          description: Success
+  '/nowplaying/{station_id}':
+    get:
+      tags:
+        - 'Now Playing'
+      description: 'Returns a full summary of the specified station''s current state.'
+      operationId: 'App\Controller\Api\NowplayingController::__invoke'
+      parameters:
+        -
+          $ref: '#/components/parameters/station_id_required'
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: 'Station not found'
+  '/station/{station_id}/history':
+    get:
+      tags:
+        - 'Stations: History'
+      description: 'Return song playback history items for a given station.'
+      operationId: 'App\Controller\Api\Stations\HistoryController::__invoke'
+      parameters:
+        -
+          $ref: '#/components/parameters/station_id_required'
+        -
+          name: start
+          in: query
+          description: 'The start date for records, in YYYY-MM-DD format.'
+          required: false
+          schema:
+            type: string
+        -
+          name: end
+          in: query
+          description: 'The end date for records, in YYYY-MM-DD format.'
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Api_DetailedSongHistory'
+        '404':
+          description: 'Station not found'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+  /stations:
+    get:
+      tags:
+        - 'Stations: General'
+      description: 'Returns a list of stations.'
+      operationId: 'App\Controller\Api\Stations\IndexController::listAction'
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Api_Station'
+  '/station/{station_id}':
+    get:
+      tags:
+        - 'Stations: General'
+      description: 'Return information about a single station.'
+      operationId: 'App\Controller\Api\Stations\IndexController::indexAction'
+      parameters:
+        -
+          $ref: '#/components/parameters/station_id_required'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api_Station'
+        '404':
+          description: 'Station not found'
+  '/station/{station_id}/listeners':
+    get:
+      tags:
+        - 'Stations: Listeners'
+      description: 'Return detailed information about current listeners.'
+      operationId: 'App\Controller\Api\Stations\ListenersController::indexAction'
+      parameters:
+        -
+          $ref: '#/components/parameters/station_id_required'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Api_Listener'
+        '404':
+          description: 'Station not found'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+  '/station/{station_id}/art/{media_id}':
+    get:
+      tags:
+        - 'Stations: Media'
+      description: 'Returns the album art for a song, or a generic image.'
+      operationId: 'App\Controller\Api\Stations\MediaController::artAction'
+      parameters:
+        -
+          $ref: '#/components/parameters/station_id_required'
+        -
+          name: media_id
+          in: path
+          description: 'The station media unique ID'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The requested album artwork'
+        '404':
+          description: 'Image not found; generic filler image.'
+  '/station/{station_id}/queue':
+    get:
+      tags:
+        - 'Stations: Queue'
+      description: 'Return information about the upcoming song playback queue.'
+      operationId: 'App\Controller\Api\Stations\QueueController::listAction'
+      parameters:
+        -
+          $ref: '#/components/parameters/station_id_required'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Api_QueuedSong'
+        '404':
+          description: 'Station not found'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+  '/station/{station_id}/queue/{id}':
+    get:
+      tags:
+        - 'Stations: Queue'
+      description: 'Retrieve details of a single queued item.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Queue Item ID'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api_QueuedSong'
+        '404':
+          description: 'Station or Queue ID not found'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+    delete:
+      tags:
+        - 'Stations: Queue'
+      description: 'Retrieve details of a single queued item.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Queue Item ID'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api_Status'
+        '404':
+          description: 'Station or Queue ID not found'
+        '403':
+          description: 'Access denied'
+      security:
+        -
+          api_key: []
+  '/station/{station_id}/requests':
+    get:
+      tags:
+        - 'Stations: Song Requests'
+      description: 'Return a list of requestable songs.'
+      operationId: 'App\Controller\Api\Stations\RequestsController::listAction'
+      parameters:
+        -
+          $ref: '#/components/parameters/station_id_required'
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: 'Station not found'
+        '403':
+          description: 'Station does not support requests'
+  '/station/{station_id}/request/{request_id}':
+    post:
+      tags:
+        - 'Stations: Song Requests'
+      description: 'Submit a song request.'
+      operationId: 'App\Controller\Api\Stations\RequestsController::submitAction'
+      parameters:
+        -
+          $ref: '#/components/parameters/station_id_required'
+        -
+          name: request_id
+          in: path
+          description: 'The requestable song ID'
+          required: true
+          schema:
+            type: int64
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: 'Station not found'
+        '403':
+          description: 'Station does not support requests'
+  '/station/{station_id}/status':
+    get:
+      tags:
+        - 'Stations: Service Control'
+      description: 'Retrieve the current status of all serivces associated with the radio broadcast.'
+      operationId: 'App\Controller\Api\Stations\ServicesController::statusAction'
+      parameters:
+        -
+          $ref: '#/components/parameters/station_id_required'
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: 'Access Forbidden'
+      security:
+        -
+          api_key: []
+  '/station/{station_id}/restart':
+    post:
+      tags:
+        - 'Stations: Service Control'
+      description: 'Restart all services associated with the radio broadcast.'
+      operationId: 'App\Controller\Api\Stations\ServicesController::restartAction'
+      parameters:
+        -
+          $ref: '#/components/parameters/station_id_required'
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: 'Access Forbidden'
+      security:
+        -
+          api_key: []
+  '/station/{station_id}/frontend/{action}':
+    post:
+      tags:
+        - 'Stations: Service Control'
+      description: 'Perform service control actions on the radio frontend (Icecast, SHOUTcast, etc.)'
+      operationId: 'App\Controller\Api\Stations\ServicesController::frontendAction'
+      parameters:
+        -
+          $ref: '#/components/parameters/station_id_required'
+        -
+          name: action
+          in: path
+          description: 'The action to perform (start, stop, restart)'
+          required: false
+          schema:
+            type: string
+          content: restart
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: 'Access Forbidden'
+      security:
+        -
+          api_key: []
+  '/station/{station_id}/backend/{action}':
+    post:
+      tags:
+        - 'Stations: Service Control'
+      description: 'Perform service control actions on the radio backend (Liquidsoap)'
+      operationId: 'App\Controller\Api\Stations\ServicesController::backendAction'
+      parameters:
+        -
+          $ref: '#/components/parameters/station_id_required'
+        -
+          name: action
+          in: path
+          description: 'The action to perform (start, stop, restart)'
+          required: false
+          schema:
+            type: string
+          content: restart
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: 'Access Forbidden'
+      security:
+        -
+          api_key: []
+components:
+  schemas:
+    Api_Admin_Settings:
+      properties:
+        base_url:
+          description: 'Site Base URL'
+          type: string
+        instance_name:
+          description: 'AzuraCast Instance Name'
+          type: string
+        timezone:
+          description: 'System Default Time Zone'
+          type: string
+        prefer_browser_url:
+          description: 'Prefer Browser URL (If Available)'
+          type: integer
+        use_radio_proxy:
+          description: 'Use Web Proxy for Radio'
+          type: integer
+        history_keep_days:
+          description: 'Days of Playback History to Keep'
+          type: integer
+        always_use_ssl:
+          description: 'Always Use HTTPS'
+          type: integer
+        api_access_control:
+          description: 'API "Access-Control-Allow-Origin" header'
+          type: string
+        analytics:
+          description: 'Listener Analytics Collection'
+          type: string
+        central_updates_channel:
+          description: 'Check for Updates and Announcements'
+          type: integer
+        public_theme:
+          description: 'Base Theme for Public Pages'
+          type: string
+        hide_album_art:
+          description: 'Hide Album Art on Public Pages'
+          type: integer
+        homepage_redirect_url:
+          description: 'Homepage Redirect URL'
+          type: string
+        default_album_art_url:
+          description: 'Default Album Art URL'
+          type: string
+        hide_product_name:
+          description: 'Hide AzuraCast Branding on Public Pages'
+          type: integer
+        custom_css_public:
+          description: 'Custom CSS for Public Pages'
+          type: string
+        custom_js_public:
+          description: 'Custom JS for Public Pages'
+          type: string
+        custom_css_internal:
+          description: 'Custom CSS for Internal Pages'
+          type: string
+      type: object
+    Api_DetailedSongHistory:
+      allOf:
+        -
+          $ref: '#/components/schemas/Api_SongHistory'
+        -
+          properties:
+            listeners_start:
+              description: 'Number of listeners when the song playback started.'
+              type: integer
+              example: 94
+            listeners_end:
+              description: 'Number of listeners when song playback ended.'
+              type: integer
+              example: 105
+            delta_total:
+              description: 'The sum total change of listeners between the song''s start and ending.'
+              type: integer
+              example: 11
+          type: object
+    Api_Error:
+      properties:
+        code:
+          description: 'The numeric code of the error.'
+          type: integer
+          example: 500
+        message:
+          description: 'The text description of the error.'
+          type: string
+          example: 'Error description.'
+        stack_trace:
+          description: 'A stack trace outlining the error, if permissions allow this to be shown.'
+          type: array
+          items: {  }
+        success:
+          description: 'Used for API calls that expect an \Entity\Api\Status type response.'
+          type: boolean
+          example: false
+      type: object
+    Api_Listener:
+      properties:
+        ip:
+          description: 'The listener''s IP address'
+          type: string
+          example: 127.0.0.1
+        user_agent:
+          description: 'The listener''s HTTP User-Agent'
+          type: string
+          example: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.86 Safari/537.36'
+        is_mobile:
+          description: 'Whether the user-agent is likely a mobile browser.'
+          type: boolean
+          example: true
+        connected_on:
+          description: 'UNIX timestamp that the user first connected.'
+          type: integer
+          example: 1549614144
+        connected_time:
+          description: 'Number of seconds that the user has been connected.'
+          type: integer
+          example: 30
+        location:
+          description: 'Location metadata, if available'
+          type: array
+          items: {  }
+      type: object
+    Api_NewRecord:
+      allOf:
+        -
+          $ref: '#/components/schemas/Api_Status'
+        -
+          properties:
+            links:
+              type: array
+              items:
+                type: string
+                example: 'http://localhost/api/record/1'
+          type: object
+    Api_NowPlaying:
+      properties:
+        station:
+          $ref: '#/components/schemas/Api_Station'
+        listeners:
+          $ref: '#/components/schemas/Api_NowPlayingListeners'
+        live:
+          $ref: '#/components/schemas/Api_NowPlayingLive'
+        now_playing:
+          $ref: '#/components/schemas/Api_NowPlayingCurrentSong'
+        playing_next:
+          $ref: '#/components/schemas/Api_SongHistory'
+        song_history:
+          type: array
+          items:
+            $ref: '#/components/schemas/Api_SongHistory'
+        cache:
+          description: 'Debugging information about where the now playing data comes from.'
+          type: string
+          enum:
+            - hit
+            - database
+            - station
+      type: object
+    Api_NowPlayingCurrentSong:
+      allOf:
+        -
+          $ref: '#/components/schemas/Api_SongHistory'
+        -
+          properties:
+            elapsed:
+              description: 'Elapsed time of the song''s playback since it started.'
+              type: integer
+              example: 25
+            remaining:
+              description: 'Remaining time in the song, in seconds.'
+              type: integer
+              example: 155
+          type: object
+    Api_NowPlayingListeners:
+      properties:
+        current:
+          description: 'Current listeners, either unique (if supplied) or total (non-unique)'
+          type: integer
+          example: 15
+        unique:
+          description: 'Total unique current listeners'
+          type: integer
+          example: 15
+        total:
+          description: 'Total non-unique current listeners'
+          type: integer
+          example: 20
+      type: object
+    Api_NowPlayingLive:
+      properties:
+        is_live:
+          description: 'Whether the stream is known to currently have a live DJ.'
+          type: boolean
+          example: false
+        streamer_name:
+          description: 'The current active streamer/DJ, if one is available.'
+          type: string
+          example: 'DJ Jazzy Jeff'
+      type: object
+    Api_QueuedSong:
+      allOf:
+        -
+          $ref: '#/components/schemas/Api_SongHistory'
+        -
+          properties:
+            cued_at:
+              description: 'UNIX timestamp when the item was cued for playback.'
+              type: integer
+              example: 1549614144
+            autodj_custom_uri:
+              description: 'Custom AutoDJ playback URI, if it exists.'
+              type: string
+              example: ''
+            links:
+              type: array
+              items:
+                type: string
+                example: 'http://localhost/api/stations/1/queue/1'
+          type: object
+    Api_Song:
+      properties:
+        id:
+          description: 'The song''s 32-character unique identifier hash'
+          type: string
+          example: 9f33bbc912c19603e51be8e0987d076b
+        text:
+          description: 'The song title, usually "Artist - Title"'
+          type: string
+          example: 'Chet Porter - Aluko River'
+        artist:
+          description: 'The song artist.'
+          type: string
+          example: 'Chet Porter'
+        title:
+          description: 'The song title.'
+          type: string
+          example: 'Aluko River'
+        album:
+          description: 'The song album.'
+          type: string
+          example: 'Moving Castle'
+        lyrics:
+          description: 'Lyrics to the song.'
+          type: string
+          example: ''
+        art:
+          description: 'URL to the album artwork (if available).'
+          type: string
+          example: 'https://picsum.photos/1200/1200'
+        custom_fields:
+          type: array
+          items:
+            type: string
+            example: custom_field_value
+      type: object
+    Api_SongHistory:
+      properties:
+        sh_id:
+          description: 'Song history unique identifier'
+          type: integer
+        played_at:
+          description: 'UNIX timestamp when playback started.'
+          type: integer
+          example: 1549614144
+        duration:
+          description: 'Duration of the song in seconds'
+          type: integer
+          example: 180
+        playlist:
+          description: 'Indicates the playlist that the song was played from, if available, or empty string if not.'
+          type: string
+          example: 'Top 100'
+        is_request:
+          description: 'Indicates whether the song is a listener request.'
+          type: boolean
+        song:
+          $ref: '#/components/schemas/Api_Song'
+      type: object
+    Api_Station:
+      properties:
+        id:
+          description: 'Station ID'
+          type: integer
+          example: 1
+        name:
+          description: 'Station name'
+          type: string
+          example: 'AzuraTest Radio'
+        shortcode:
+          description: 'Station "short code", used for URL and folder paths'
+          type: string
+          example: azuratest_radio
+        description:
+          description: 'Station description'
+          type: string
+          example: 'An AzuraCast station!'
+        frontend:
+          description: 'Which broadcasting software (frontend) the station uses'
+          type: string
+          example: shoutcast2
+        backend:
+          description: 'Which AutoDJ software (backend) the station uses'
+          type: string
+          example: liquidsoap
+        listen_url:
+          description: 'The full URL to listen to the default mount of the station'
+          type: string
+          example: 'http://localhost:8000/radio.mp3'
+        is_public:
+          description: 'If the station is public (i.e. should be shown in listings of all stations)'
+          type: boolean
+          example: true
+        mounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Api_StationMount'
+        remotes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Api_StationRemote'
+      type: object
+    Api_StationMount:
+      properties:
+        name:
+          description: 'Mount point name/URL'
+          type: string
+          example: /radio.mp3
+        is_default:
+          description: 'If the mount is the default mount for the parent station'
+          type: boolean
+          example: true
+        url:
+          description: 'Full listening URL specific to this mount'
+          type: string
+          example: 'http://localhost:8000/radio.mp3'
+        bitrate:
+          description: 'Bitrate (kbps) of the broadcasted audio (if known)'
+          type: integer
+          example: 128
+        format:
+          description: 'Audio encoding format of broadcasted audio (if known)'
+          type: string
+          example: mp3
+      type: object
+    Api_StationRemote:
+      properties:
+        url:
+          description: 'Full listening URL specific to this mount'
+          type: string
+          example: 'http://localhost:8000/radio.mp3'
+        bitrate:
+          description: 'Bitrate (kbps) of the broadcasted audio (if known)'
+          type: integer
+          example: 128
+        format:
+          description: 'Audio encoding format of broadcasted audio (if known)'
+          type: string
+          example: mp3
+      type: object
+    Api_StationRequest:
+      properties:
+        request_id:
+          description: 'Requestable ID unique identifier'
+          type: string
+          example: 1
+        request_url:
+          description: 'URL to directly submit request'
+          type: string
+          example: /api/station/1/request/1
+        song:
+          $ref: '#/components/schemas/Api_Song'
+      type: object
+    Api_StationServiceStatus:
+      properties:
+        backend_running:
+          type: boolean
+          example: true
+        frontend_running:
+          type: boolean
+          example: true
+      type: object
+    Api_Status:
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: 'Changes saved successfully.'
+      type: object
+    Api_SystemStatus:
+      properties:
+        online:
+          description: 'Whether the service is online or not (should always be true)'
+          type: boolean
+          example: true
+        timestamp:
+          description: 'The current UNIX timestamp'
+          type: integer
+          example: 1549614144
+      type: object
+    Api_Time:
+      properties:
+        timestamp:
+          description: 'The current UNIX timestamp'
+          type: integer
+          example: 1497652397
+        gmt_datetime:
+          type: string
+          example: '2017-06-16 10:33:17'
+        gmt_date:
+          type: string
+          example: 'June 16, 2017'
+        gmt_time:
+          type: string
+          example: '10:33pm'
+        gmt_timezone:
+          type: string
+          example: GMT
+        gmt_timezone_abbr:
+          type: string
+          example: GMT
+        local_datetime:
+          type: string
+          example: '2017-06-16 10:33:17'
+        local_date:
+          type: string
+          example: 'June 16, 2017'
+        local_time:
+          type: string
+          example: '10:33pm'
+        local_timezone:
+          type: string
+          example: UTC
+        local_timezone_abbr:
+          type: string
+          example: UTC
+      type: object
+    CustomField:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        short_name:
+          description: 'The programmatic name for the field. Can be auto-generated from the full name.'
+          type: string
+      type: object
+    Role:
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 'Super Administrator'
+        permissions:
+          items: {  }
+      type: object
+    Station:
+      type: object
+    User:
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          example: demo@azuracast.com
+        auth_password:
+          type: string
+          example: ''
+        name:
+          type: string
+          example: 'Demo Account'
+        timezone:
+          type: string
+          example: America/Chicago
+        locale:
+          type: string
+          example: en_US
+        theme:
+          type: string
+          example: dark
+        created_at:
+          type: integer
+          example: 1549614144
+        updated_at:
+          type: integer
+          example: 1549614144
+        roles:
+          items: {  }
+      type: object
+  responses:
+    todo:
+      description: 'This API call has no documented response (yet)'
+  parameters:
+    station_id_required:
+      name: station_id
+      in: path
+      description: 'The station ID'
+      required: true
+      schema:
+        type: int64
+      example: 1
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-API-Key
+      in: header
+tags:
+  -
+    name: 'Now Playing'
+    description: 'Endpoints that provide full summaries of the current state of stations.'
+  -
+    name: 'Stations: General'
+  -
+    name: 'Stations: Song Requests'
+  -
+    name: 'Stations: History'
+  -
+    name: 'Stations: Listeners'
+  -
+    name: 'Stations: Media'
+  -
+    name: 'Stations: Queue'
+  -
+    name: 'Stations: Service Control'
+  -
+    name: 'Administration: Custom Fields'
+  -
+    name: 'Administration: Users'
+  -
+    name: 'Administration: Roles'
+  -
+    name: 'Administration: Settings'
+  -
+    name: Miscellaneous
+externalDocs:
+  description: 'AzuraCast on GitHub'
+  url: 'https://github.com/AzuraCast/AzuraCast'

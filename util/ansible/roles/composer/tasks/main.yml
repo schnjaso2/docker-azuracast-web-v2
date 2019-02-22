@@ -1,0 +1,27 @@
+---
+- name: Install Composer
+  shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
+  args:
+    creates: /usr/bin/composer
+    warn: no
+
+- name: Ensure vendor folder exists
+  file: path="{{ item }}" state=directory owner=azuracast group=www-data mode=0744
+  with_items:
+   - "{{ www_base }}/vendor"
+
+- name: Install Composer Dependencies (Development)
+  become: true
+  become_user: azuracast
+  shell: composer install
+  args:
+    chdir: "{{ www_base }}"
+  when: app_env == "development"
+
+- name: Install Composer Dependencies (Production)
+  become: true
+  become_user: azuracast
+  shell: composer install --no-dev
+  args:
+    chdir: "{{ www_base }}"
+  when: app_env == "production"

@@ -1,0 +1,11 @@
+<?php
+$this->layout('main', [
+    'title' => $title,
+    'header' => $header
+]);
+
+if ($render_mode === 'edit') {
+    echo $this->fetch('system/form_edit', ['form' => $form]);
+} else {
+    echo $form->renderView();
+}

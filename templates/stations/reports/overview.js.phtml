@@ -1,0 +1,125 @@
+$(function () {
+    Highcharts.setOptions({
+        global: {
+            timezoneOffset: <?=\Azura\Timezone::getOffsetMinutes() ?>,
+            useUTC: false
+        }
+    });
+
+    $('#listeners_by_day').highcharts({
+        chart: {
+            zoomType: 'x'
+        },
+        title: { text:'' },
+        xAxis: {
+            type: 'datetime',
+            labels: {
+                formatter: function () {
+                    return Highcharts.dateFormat('%a %d %b', this.value);
+                },
+                dateTimeLabelFormats: {
+                    minute: '%H:%M',
+                    hour: '%H:%M',
+                    day: '%e. %b',
+                    week: '%e. %b',
+                    month: '%b \'%y',
+                    year: '%Y'
+                }
+            }
+        },
+        yAxis: {
+            title: {
+                text: <?=$this->escapeJs(__('Listeners')) ?>
+            },
+            min: 0
+        },
+        tooltip: {
+            crosshairs: true,
+            xDateFormat: '%Y-%m-%d %l:%M%P'
+        },
+        plotOptions: {
+            spline: {
+                lineWidth: 2,
+                marker: { enabled: false },
+                shadow: false,
+                states: {
+                    hover: {
+                        lineWidth: 3
+                    }
+                },
+                threshold: null
+            }
+        },
+        colors: [
+            '#666666',
+            '#2f7ed8',
+            '#000000'
+        ],
+
+        series: [{
+            name: <?=$this->escapeJs(__('Daily Listener Range')) ?>,
+            type: 'arearange',
+            data: <?=$daily_ranges ?>
+        }, {
+            name: <?=$this->escapeJs(__('Hourly Average Listeners')) ?>,
+            type: 'spline',
+            data: <?=$hourly_averages ?>
+        }, {
+            name: <?=$this->escapeJs(__('Daily Average Listeners')) ?>,
+            type: 'spline',
+            data: <?=$daily_averages ?>
+        }]
+    });
+
+    $('#listeners_by_day_of_week').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
+        },
+        title: { text:'' },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    color: '#000000',
+                    connectorColor: '#000000',
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                }
+            }
+        },
+
+        series: [{
+            type: 'pie',
+            name: <?=$this->escapeJs(__('Listeners')) ?>,
+            data: <?=$day_of_week_stats ?>
+        }]
+    });
+
+    $('#listeners_by_hour').highcharts({
+        chart: {},
+        title: { text:'' },
+        xAxis: {
+            allowDecimals: false,
+            tickInterval: 1
+        },
+        yAxis: {
+            title: {
+                text: '<?=__('Listeners') ?>'
+            },
+            min: 0
+        },
+        tooltip: {
+            crosshairs: true,
+            shared: true
+        },
+
+        series: [{
+            name: <?=$this->escapeJs(__('Average Listeners')) ?>,
+            type: 'column',
+            data: <?=$averages_by_hour ?>
+        }]
+    });
+});

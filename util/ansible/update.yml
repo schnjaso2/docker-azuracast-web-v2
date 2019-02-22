@@ -1,0 +1,28 @@
+---
+- hosts: all
+  become: true
+  vars:
+    util_base: "{{ playbook_dir | dirname }}"
+    www_base: "{{ util_base | dirname }}"
+    app_base: "{{ www_base | dirname }}"
+    tmp_base: "{{ app_base }}/www_tmp"
+    app_env: "production"
+    update_mode: true
+    update_revision: 1
+
+  roles:
+    - init
+    - azuracast-config
+    - { role: azuracast-radio, when: update_revision|int < 33 }
+    - { role: supervisord, when: update_revision|int < 13 }
+    - { role: mariadb, when: update_revision|int < 15 }
+    - { role: nginx, when: update_revision|int < 30 }
+    - { role: redis, when: update_revision|int < 14 }
+    - { role: php, when: update_revision|int < 20 }
+    - composer
+    - { role: influxdb, when: update_revision|int < 10 }
+    - { role: ufw, when: update_revision|int < 12 }
+    - { role: maxmind, when: update_revision|int < 24 }
+    - { role: services, when: update_revision|int < 13 }
+    - { role: azuracast-cron, when: update_revision|int < 34 }
+    - azuracast-setup

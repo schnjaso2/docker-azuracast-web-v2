@@ -1,0 +1,117 @@
+<?php $this->layout('main', ['title' => __('Dashboard'), 'manual' => true]); ?>
+
+<?php
+/** @var \App\Customization $customization */
+/** @var \Azura\Assets $assets */
+$assets
+    ->load('vue')
+    ->load('radio')
+    ->addInlineJs($this->fetch('frontend/index/index.js', ['stations' => $stations]));
+
+if ($metrics) {
+    $assets
+        ->load('highcharts')
+        ->load('highcharts_theme_'.$customization->getTheme())
+        ->addInlineJs($this->fetch('frontend/index/index_metrics.js', ['metrics' => $metrics]));
+}
+?>
+
+<?php if (!empty($notifications)): ?>
+    <?php foreach($notifications as $notification): ?>
+        <?php /** @var \App\Notification\Notification $notification */ ?>
+        <section class="card mb-4 border-<?=$notification->getType() ?>" role="region">
+            <div class="card-body">
+                <h3 class="card-title"><?=$notification->getTitle() ?></h3>
+                <p class="card-text">
+                    <?=$notification->getBody() ?>
+                </p>
+            </div>
+        </section>
+    <?php endforeach; ?>
+<?php endif; ?>
+
+<?php if ($metrics): ?>
+<div class="row">
+    <div class="col-sm-6">
+        <section class="card mb-4" role="region">
+            <div class="card-body">
+                <h3 class="card-title"><?=__('Listeners Across All Stations') ?></h3>
+                <div id="network_chart" style="height: 250px;"></div>
+            </div>
+        </section>
+    </div>
+    <div class="col-sm-6">
+        <section class="card mb-4" role="region">
+            <div class="card-body">
+                <h3 class="card-title"><?=__('Listeners Per Station') ?></h3>
+                <div id="station_chart" style="height: 250px;"></div>
+            </div>
+        </section>
+    </div>
+</div>
+<?php endif; ?>
+
+<div class="row">
+    <div class="col-sm-12">
+        <section class="card" role="region">
+            <div class="card-body">
+                <h3 class="card-title"><?=__('Station Overview') ?></h3>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped" id="station_dashboard">
+                    <colgroup>
+                        <col width="5%">
+                        <col width="30%">
+                        <col width="10%">
+                        <col width="40%">
+                        <col width="15%">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th><?=__('Station Name') ?></th>
+                            <th class="text-center"><?=__('Listeners') ?></th>
+                            <th><?=__('Now Playing') ?></th>
+                            <th><?=__('Options') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="align-middle" v-bind:id="'station_' + row.station.id" v-for="row in stations" >
+                            <td class="text-center">
+                                <a class="btn-audio" role="button" title="<?=__('Play/Pause') ?>" href="#" v-bind:data-url="row.stream_url">
+                                    <i class="material-icons lg align-middle">play_circle_filled</i>
+                                </a>
+                            </td>
+                            <td>
+                                <big><a v-bind:href="row.public_url" target="_blank">{{ row.station.name }}</a></big>
+                            </td>
+                            <td class="text-center">
+                                <span class="nowplaying-listeners">{{ row.np.listeners.current }}</span>
+                            </td>
+                            <td>
+                                <div v-if="row.np.now_playing.song.title != ''">
+                                    <strong><span class="nowplaying-title">{{ row.np.now_playing.song.title }}</span></strong><br>
+                                    <span class="nowplaying-artist">{{ row.np.now_playing.song.artist }}</span>
+                                </div>
+                                <div v-else>
+                                    <strong><span class="nowplaying-title">{{ row.np.now_playing.song.text }}</span></strong>
+                                </div>
+                            </td>
+                            <td>
+                                <a class="btn btn-primary" role="button" v-bind:href="row.manage_url"><?=__('Manage') ?></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        <?php if ($acl->userAllowed($user, 'administer stations')): ?>
+            <div class="card-actions">
+                <a class="btn btn-outline-primary" href="<?=$router->named('admin:stations:add') ?>">
+                    <i class="material-icons" aria-hidden="true">add</i>
+                    <?=sprintf(__('Add %s'), __('Station')) ?>
+                </a>
+            </div>
+        <?php endif; ?>
+        </section>
+    </div>
+</div>

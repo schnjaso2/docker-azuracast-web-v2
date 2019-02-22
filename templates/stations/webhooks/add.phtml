@@ -1,0 +1,10 @@
+<?php $this->layout('main', ['title' => sprintf(__('Add %s'), __('Web Hook'))]) ?>
+
+<p><?=__('Select the type of web hook to create.') ?></p>
+
+<dl>
+<?php foreach($connectors as $type => $info): ?>
+    <dt class="p-t-5"><a href="<?=$router->fromHere(null, ['type' => $type]) ?>"><?=$info['name'] ?></a></dt>
+    <dd class="p-b-5"><?=$info['description'] ?></dd>
+<?php endforeach; ?>
+</dl>
