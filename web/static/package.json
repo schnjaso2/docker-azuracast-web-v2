@@ -19,7 +19,7 @@
     "jquery": "^3.3.1",
     "jquery-sortable": "^0.9.13",
     "lodash": "^4.17.11",
-    "moment": "^2.23.0",
+    "moment": "^2.29.1",
     "moment-timezone": "^0.5.23",
     "popper.js": "^1.14.6",
     "proj4": "^2.5.0",
